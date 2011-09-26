@@ -1,0 +1,29 @@
+#!/bin/bash
+
+basedir=`dirname $0`/mongodb
+dbpath=$basedir/var/data/mongodb
+logpath=$basedir/var/log/mongodb.log
+conf=$basedir/etc/mongodb.conf
+mongoopts="-f $conf --dbpath $dbpath --logpath=$logpath"
+
+if [ ! -d "$dbpath" ]; then
+     mkdir -p $dbpath
+fi
+
+if [ ! -d `dirname $logpath` ]; then
+     mkdir -p `dirname $logpath`
+fi
+
+if [ `uname` == 'Darwin' ]; then
+    mongodcmd=$basedir/mongodb-osx-x86_64-1.8.1/bin/mongod
+    mongocmd=$basedir/mongodb-osx-x86_64-1.8.1/bin/mongo
+fi
+
+case $1 in
+  start)
+    $mongodcmd $mongoopts
+  ;;
+  stop)
+    $mongocmd --quiet --eval 'db.shutdownServer()' admin
+  ;;
+esac
