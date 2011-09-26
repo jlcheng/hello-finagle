@@ -1,0 +1,50 @@
+#!/bin/bash
+
+basedir=`dirname $0`/mongodb
+dbpath=$basedir/var/data/mongodb
+logpath=$basedir/var/log/mongodb.log
+conf=$basedir/etc/mongodb.conf
+mongoopts="-f $conf --dbpath $dbpath --logpath=$logpath"
+
+if [ ! -d "$dbpath" ]; then
+     mkdir -p $dbpath
+fi
+
+if [ ! -d `dirname $logpath` ]; then
+     mkdir -p `dirname $logpath`
+fi
+
+case `uname` in
+  Darwin)
+    mongoinstall=`ls -d $basedir/mongodb-osx-*|tail -n 1`
+	retval=$?
+	if [ $retval != "0" ]; then
+        echo "A copy of mongodb does not appear to be installed at $basedir/mongodb-linux..."
+	fi
+  ;;
+  Linux)
+    mongoinstall=`ls -d $basedir/mongodb-linux-*|tail -n 1`
+	retval=$?
+	if [ $retval != "0" ]; then
+        echo "A copy of mongodb does not appear to be installed at $basedir/mongodb-linux..."
+	fi
+  ;;
+  *) 
+    exit 0
+esac
+
+mongodcmd=$mongoinstall/bin/mongod
+mongocmd=$mongoinstall/bin/mongo
+
+
+case $1 in
+  start)
+    $mongodcmd $mongoopts
+  ;;
+  stop)
+    $mongocmd --quiet --eval 'db.shutdownServer()' admin
+  ;;
+  *)
+    echo "$0 (start|stop)"
+  ;;
+esac
