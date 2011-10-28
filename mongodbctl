@@ -19,7 +19,7 @@ case `uname` in
     mongoinstall=`ls -d $basedir/mongodb-osx-*|tail -n 1`
 	retval=$?
 	if [ $retval != "0" ]; then
-        echo "A copy of mongodb does not appear to be installed at $basedir/mongodb-linux..."
+        echo "A copy of mongodb does not appear to be installed at $basedir/mongodb-osx..."
 	fi
   ;;
   Linux)
